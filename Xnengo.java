@@ -6,37 +6,73 @@ import java.util.*;
 public class Xnengo {
 
     // クラス定数
-    static final String FILENAME = "yearx.dat";
+    // static final String FILENAME = "yearx.dat";
     static final String VERSION = "0.1";
 
-    // クラス変数
-    // LinkedHashMap -- 入力した順番を保持する
-    Map <String, Integer> yeardata = new LinkedHashMap<>();
+    static final Map<String, Integer> yeardata = new LinkedHashMap<String, Integer>() {{
+        put ("文禄", 1591);
+        put ("慶長", 1594);
+        put ("元和", 1614);
+        put ("寛永", 1623);
+        put ("正保", 1643);
+        put ("慶安", 1647);
+        put ("承応", 1651);
+        put ("明暦", 1654);
+        put ("万治", 1657);
+        put ("寛文", 1660);
+        put ("延宝", 1672);
+        put ("天和", 1680);
+        put ("貞享", 1683);
+        put ("元禄", 1687);
+        put ("宝永", 1703);
+        put ("正徳", 1710);
+        put ("享保", 1715);
+        put ("元文", 1735);
+        put ("寛保", 1740);
+        put ("延享", 1743);
+        put ("寛延", 1747);
+        put ("宝歴", 1750);
+        put ("明和", 1763);
+        put ("安永", 1771);
+        put ("天明", 1780);
+        put ("寛政", 1788);
+        put ("享和", 1800);
+        put ("文化", 1803);
+        put ("文政", 1817);
+        put ("天保", 1829);
+        put ("弘化", 1843);
+        put ("嘉永", 1847);
+        put ("安政", 1853);
+        put ("万延", 1859);
+        put ("文久", 1860);
+        put ("元治", 1863);
+        put ("慶応", 1864);
+        put ("明治", 1866);
+        put ("大正", 1911);
+        put ("昭和", 1925);
+        put ("平成", 1988);
+        put ("令和", 2018);
+        put ("未来", 2100);
+        }};
+
+        static final String MES = "java Xnengo -g => 西暦を求める\njava Xnengo -n => 和暦を求める";
+        static final String VERMES = "西暦<=>和暦 変換プログラム Java版 ver_"
+            + VERSION
+            + "\nCopyright 2019 Seiichi Nukayama";
 
     /**
-     * setMap -- 年号データファイルを読み取り、それを
-     *           Mapにセットする。
-     * 
-     * @param: FILENAME -- 年号データのファイル名(csvファイル)
-     *                     形式 -- 年号,1923
+     * 年号の一覧を作る
+     *
+     * @return -- String 年号を " " で連結した文字列。
      */
-    private void setMap (String FILENAME) throws IOException {
-        File file = new File (FILENAME);
-        try (BufferedReader br = new BufferedReader (new FileReader (file))) {
-            String data, nengo;
-            int year;
-            
-            while ((data = br.readLine()) != null) {
-                String array[] = data.split(",");
-                if (array.length != 2) throw new NumberFormatException();
-                nengo = array[0];
-                year = Integer.parseInt (array[1]);
-                yeardata.put(nengo, year);
-                // System.out.println (nengo + " : " + year);  // チェック用
-            }
+    private String makeHelp () {
+        String text = "";
+        for (Map.Entry<String, Integer> s : yeardata.entrySet()) {
+            text = text + s.getKey() + " ";
         }
+        return text;
     }
-
+    
     /**
      * nengoArray -- 西暦の数字から、年号と元号年を求める。
      * @param: year -- 0 < year < 2100 の数字
@@ -66,20 +102,6 @@ public class Xnengo {
     }
 
     /**
-     *
-     */
-    private int getSeireki (String[] nengo) {
-        int yearIt = 0;
-        
-        for (Map.Entry<String, Integer> s : yeardata.entrySet()) {
-            if (nengo[0].equals(s.getKey())) {
-                yearIt = Integer.parseInt(nengo[1]) + s.getValue();
-            }
-        }
-        return yearIt;
-    }
-
-    /**
      * ユーザーに文字列の入力をしてもらい、それを返す
      * 
      * @param: prompt -- ユーザーに表示する文字列
@@ -105,21 +127,14 @@ public class Xnengo {
         String[] nengo = {null, null};
         int n = 0, year = 0;
         Xnengo job = new Xnengo();
-        String mes = "java Xnengo -g => 西暦を求める\njava Xnengo -n => 和暦を求める";
-        String helpMes = "文禄,慶長,元和,寛永,正保,慶安,承応,明暦,万治,寛文,延宝,天和,貞享,元禄,宝永,正徳,享保,元文,寛保,延享,寛延,宝歴,明和,安永,天明,寛政,享和,文化,文政,天保,弘化,嘉永,安政,万延,文久,元治,慶応,明治,大正,昭和,平成,令和,未来";
-        String verMes = "西暦<=>和暦 変換プログラム Java版 ver_" + VERSION + "\nCopyright 2019 Seiichi Nukayama";
+
+        String helpMES = job.makeHelp();
         
-        // 年号データの読み取り
-        try {
-            job.setMap(FILENAME);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         
         // 引数チェック
         switch (n = args.length) {
         case 0:
-            System.out.println(mes);
+            System.out.println(MES);
             System.exit(1);
             break;
         case 1:
@@ -128,13 +143,14 @@ public class Xnengo {
                 do {
                     nengo[0] = job.getUserInput("和暦を入力 (help: 和暦一覧)> ");
                     if ("help".equals(nengo[0])) {
-                        System.out.println(helpMes);
+                        System.out.println(helpMES);
                     }
                 } while ("help".equals(nengo[0]));
                 nengo[1] = job.getUserInput("年を半角数字で入力 > ");
-                // System.out.println(nengo[0] + " " + nengo[1]);
+                // 年号も数字も null で無ければ
                 if (nengo[0] != null && nengo[1] != null) {
-                    year = job.getSeireki(nengo);
+                    // Mapの getメソッドで一発で検索できる
+                    year = job.yeardata.get(nengo[0]) + Integer.parseInt(nengo[1]);
                     System.out.println(nengo[0] + nengo[1] + "年は、西暦 " + year + "年です。");
                 } else {
                     if (nengo[0] == null) {
@@ -147,25 +163,31 @@ public class Xnengo {
             }
             // n の場合 -- 年号を求める処理
             else if ("-n".equals(args[0])) {
-                year = Integer.parseInt(job.getUserInput("西暦を半角数字で入力 > "));
-                if (year < 0 || year > 2100) {
-                    System.out.println("引数で指定できる西暦年は、0 < 数字 < 2100 の範囲です。");
-                    System.exit(1);
+                String text = job.getUserInput("西暦を半角数字で入力 > ");
+                if (text != null) {
+                    year = Integer.parseInt(text);
+                } else {
+                    System.out.println ("西暦が null値です。");
                 }
-                nengo = job.nengoArray(year);
-                System.out.println("西暦 " + year + "年は、" + nengo[0] + " " + nengo[1] + "年です。");
+                if (year < 1592 || year > 2100) {
+                    System.out.println("引数で指定できる西暦年は、1592 <= 数字 <= 2100 の範囲です。");
+                    System.exit(1);
+                } else { 
+                    nengo = job.nengoArray(year);
+                    System.out.println("西暦 " + year + "年は、" + nengo[0] + " " + nengo[1] + "年です。");
+                }
             }
             // v の場合
             else if ("-v".equals(args[0])) {
-                System.out.println(verMes);
+                System.out.println(VERMES);
             }
             else {
-                System.out.println(mes);
+                System.out.println(MES);
                 System.exit(1);
             }
             break;
         default:
-            System.out.println(mes);
+            System.out.println(MES);
             System.exit(1);
         }
 
